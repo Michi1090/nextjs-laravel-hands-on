@@ -36,6 +36,5 @@ class LoginRequest extends FormRequest
             'email.email' => '有効なメールアドレスを入力してください。',
             'password.regex' => '8文字以上の半角英数字で入力してください',
         ];
-
     }
 }
