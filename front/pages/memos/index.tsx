@@ -15,7 +15,7 @@ const Memo: NextPage = () => {
 
   useEffect(() => {
     axiosApi
-      .get("api/memos")
+      .get("/api/memos")
       .then((res: AxiosResponse) => {
         console.log(res.data);
         setMemos(res.data.data);

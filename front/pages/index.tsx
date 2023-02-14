@@ -1,9 +1,10 @@
-import type { NextPage } from "next";
 import { AxiosError, AxiosResponse } from "axios";
 import { ChangeEvent, useState } from "react";
-import { RequiredMark } from "../components/RequiredMark";
-import { axiosApi } from "../lib/axios";
+import type { NextPage } from "next";
 import { useRouter } from "next/router";
+
+import { axiosApi } from "../lib/axios";
+import { RequiredMark } from "../components/RequiredMark";
 
 type LoginForm = {
   email: string;
