@@ -36,6 +36,7 @@ const Post: NextPage = () => {
         .post("/api/memos", memoForm)
         .then((res: AxiosResponse) => {
           console.log(res.data);
+          router.push('/memos')
         })
         .catch((error: AxiosError) => {
           console.log(error.response);

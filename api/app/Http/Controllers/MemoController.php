@@ -40,7 +40,7 @@ class MemoController extends Controller
     public function create(MemoPostRequest $request): JsonResponse
     {
         try {
-            $memo = new Memo():
+            $memo = new Memo();
             $memo->user_id = Auth::id();
             $memo->title = $request->title;
             $memo->body = $request->body;
