@@ -31,6 +31,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./api:/app:cached
+      - vendor-store:/app/vendor
     tty: true
     environment:
       - APP_ENV=development
@@ -52,4 +53,5 @@ services:
       - db-volume:/var/lib/mysql:cached
 
 volumes:
+  vendor-store:
   db-volume:

@@ -40,7 +40,7 @@ const Home: NextPage = () => {
           router.push('/memos')
         })
         .catch((error: AxiosError) => {
-          console.log(error.response);
+          console.log(error.response?.status);
         });
     });
   };
