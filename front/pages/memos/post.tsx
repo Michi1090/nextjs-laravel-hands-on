@@ -11,6 +11,11 @@ type memoForm = {
   body: string;
 };
 
+type Validation = {
+  title?: string;
+  body?: string;
+};
+
 const Post: NextPage = () => {
   const router = useRouter();
 
@@ -19,10 +24,7 @@ const Post: NextPage = () => {
     body: "",
   });
 
-  const [validation, setValidation] = useState<memoForm>({
-    title: "",
-    body: "",
-  });
+  const [validation, setValidation] = useState<Validation>({});
 
   const updateMemoForm = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -31,15 +33,28 @@ const Post: NextPage = () => {
   };
 
   const createMemo = () => {
+    setValidation({});
     axiosApi.get("/sanctum/csrf-cookie").then((res) => {
       axiosApi
         .post("/api/memos", memoForm)
         .then((res: AxiosResponse) => {
           console.log(res.data);
-          router.push('/memos')
+          router.push("/memos");
         })
         .catch((error: AxiosError) => {
           console.log(error.response);
+          if (error.response?.status === 422) {
+            const errors = error.response?.data.errors;
+            const validationMessages: { [index: string]: string } =
+              {} as Validation;
+            Object.keys(errors).map((key: string) => {
+              validationMessages[key] = errors[key][0];
+            });
+            setValidation(validationMessages);
+          }
+          if (error.response?.status === 500) {
+            alert("システムエラーです！");
+          }
         });
     });
   };
@@ -59,6 +74,9 @@ const Post: NextPage = () => {
             value={memoForm.title}
             onChange={updateMemoForm}
           />
+          {validation.title && (
+            <p className="py-3 text-red-500">{validation.title}</p>
+          )}
         </div>
         <div className="mb-5">
           <div className="flex justify-start my-2">
@@ -73,6 +91,9 @@ const Post: NextPage = () => {
             value={memoForm.body}
             onChange={updateMemoForm}
           />
+          {validation.body && (
+            <p className="py-3 text-red-500">{validation.body}</p>
+          )}
         </div>
         <div className="text-center">
           <button
