@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 
 import { axiosApi } from "../lib/axios";
 import { RequiredMark } from "../components/RequiredMark";
+import { useUserState } from "../atoms/userAtom";
+
 
 type LoginForm = {
   email: string;
@@ -16,14 +18,15 @@ type Validation = {
   password?: string;
   loginFailed?: string;
 };
+
 const Home: NextPage = () => {
   const router = useRouter();
+  const { setUser } = useUserState();
 
   const [loginForm, setLoginForm] = useState<LoginForm>({
     email: "",
     password: "",
   });
-
   const [validation, setValidation] = useState<Validation>({});
 
   const updateLoginForm = (e: ChangeEvent<HTMLInputElement>) => {
@@ -36,11 +39,10 @@ const Home: NextPage = () => {
       axiosApi
         .post("/login", loginForm)
         .then((res: AxiosResponse) => {
-          console.log(res.data);
+          setUser(res.data.data)
           router.push("/memos");
         })
         .catch((error: AxiosError) => {
-          console.log(error.response);
           if (error.response?.status === 422) {
             const errors = error.response?.data.errors;
             const validationMessages: { [index: string]: string } =

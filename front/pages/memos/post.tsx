@@ -1,10 +1,11 @@
 import { AxiosError, AxiosResponse } from "axios";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 
 import { axiosApi } from "../../lib/axios";
 import { RequiredMark } from "../../components/RequiredMark";
+import { useUserState } from "../../atoms/userAtom";
 
 type memoForm = {
   title: string;
@@ -18,13 +19,20 @@ type Validation = {
 
 const Post: NextPage = () => {
   const router = useRouter();
+  const { user } = useUserState();
 
   const [memoForm, setMemoForm] = useState<memoForm>({
     title: "",
     body: "",
   });
-
   const [validation, setValidation] = useState<Validation>({});
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/");
+      return;
+    }
+  }, [user, router]);
 
   const updateMemoForm = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -38,11 +46,9 @@ const Post: NextPage = () => {
       axiosApi
         .post("/api/memos", memoForm)
         .then((res: AxiosResponse) => {
-          console.log(res.data);
           router.push("/memos");
         })
         .catch((error: AxiosError) => {
-          console.log(error.response);
           if (error.response?.status === 422) {
             const errors = error.response?.data.errors;
             const validationMessages: { [index: string]: string } =

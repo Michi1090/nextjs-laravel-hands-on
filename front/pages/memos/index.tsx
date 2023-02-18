@@ -2,7 +2,9 @@ import { AxiosError, AxiosResponse } from "axios";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+
 import { axiosApi } from "../../lib/axios";
+import { useUserState } from "../../atoms/userAtom";
 
 type Memo = {
   title: string;
@@ -11,17 +13,23 @@ type Memo = {
 
 const Memo: NextPage = () => {
   const router = useRouter();
+  const { user } = useUserState();
+  console.log(user);
+
   const [memos, setMemos] = useState<Memo[]>([]);
 
   useEffect(() => {
+    if (!user) {
+      router.push("/");
+      return;
+    }
     axiosApi
       .get("/api/memos")
       .then((res: AxiosResponse) => {
-        console.log(res.data);
         setMemos(res.data.data);
       })
       .catch((error: AxiosError) => console.log(error.response));
-  }, []);
+  }, [user, router]);
 
   return (
     <div className="w-2/3 mx-auto mt-32">
