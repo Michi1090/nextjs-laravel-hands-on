@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 import { axiosApi } from "../../lib/axios";
-import { useUserState } from "../../atoms/userAtom";
+import { useAuth } from "../../hooks/useAuth";
 
 type Memo = {
   title: string;
@@ -13,23 +13,25 @@ type Memo = {
 
 const Memo: NextPage = () => {
   const router = useRouter();
-  const { user } = useUserState();
-  console.log(user);
+  const { checkLoggedIn } = useAuth();
 
   const [memos, setMemos] = useState<Memo[]>([]);
 
   useEffect(() => {
-    if (!user) {
-      router.push("/");
-      return;
-    }
+    const init = async () => {
+      const res: boolean = await checkLoggedIn();
+      if (!res) {
+        router.push("/");
+      }
+    };
     axiosApi
       .get("/api/memos")
       .then((res: AxiosResponse) => {
         setMemos(res.data.data);
       })
       .catch((error: AxiosError) => console.log(error.response));
-  }, [user, router]);
+    init();
+  }, []);
 
   return (
     <div className="w-2/3 mx-auto mt-32">
