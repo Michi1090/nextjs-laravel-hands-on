@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\MemoController;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,8 +21,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// メモ全件取得
-Route::get('/memos', [MemoController::class, 'fetch']);
+Route::get('/user', function () {
+    $user = Auth::user();
+    return $user ? new UserResource($user) : null;
+});
 
-// メモ登録
+Route::get('/memos', [MemoController::class, 'fetch']);
 Route::post('/memos', [MemoController::class, 'create']);

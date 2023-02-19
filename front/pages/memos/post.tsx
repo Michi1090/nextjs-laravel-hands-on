@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 import { axiosApi } from "../../lib/axios";
 import { RequiredMark } from "../../components/RequiredMark";
-import { useUserState } from "../../atoms/userAtom";
+import { useAuth } from "../../hooks/useAuth";
 
 type memoForm = {
   title: string;
@@ -19,7 +19,7 @@ type Validation = {
 
 const Post: NextPage = () => {
   const router = useRouter();
-  const { user } = useUserState();
+  const { checkLoggedIn } = useAuth();
 
   const [memoForm, setMemoForm] = useState<memoForm>({
     title: "",
@@ -28,11 +28,14 @@ const Post: NextPage = () => {
   const [validation, setValidation] = useState<Validation>({});
 
   useEffect(() => {
-    if (!user) {
-      router.push("/");
-      return;
-    }
-  }, [user, router]);
+    const init = async () => {
+      const res: boolean = await checkLoggedIn();
+      if (!res) {
+        router.push("/");
+      }
+    };
+    init();
+  }, []);
 
   const updateMemoForm = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
