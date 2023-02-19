@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import { axiosApi } from "../../lib/axios";
 import { useAuth } from "../../hooks/useAuth";
+import { Loading } from "../../components/Loading";
 
 type Memo = {
   title: string;
@@ -13,9 +14,9 @@ type Memo = {
 
 const Memo: NextPage = () => {
   const router = useRouter();
-  const { checkLoggedIn } = useAuth();
-
   const [memos, setMemos] = useState<Memo[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { checkLoggedIn } = useAuth();
 
   useEffect(() => {
     const init = async () => {
@@ -29,9 +30,12 @@ const Memo: NextPage = () => {
       .then((res: AxiosResponse) => {
         setMemos(res.data.data);
       })
-      .catch((error: AxiosError) => console.log(error.response));
+      .catch((error: AxiosError) => console.log(error.response))
+      .finally(() => setIsLoading(false));
     init();
   }, []);
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className="w-2/3 mx-auto mt-32">

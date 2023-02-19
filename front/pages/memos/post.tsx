@@ -19,13 +19,12 @@ type Validation = {
 
 const Post: NextPage = () => {
   const router = useRouter();
-  const { checkLoggedIn } = useAuth();
-
   const [memoForm, setMemoForm] = useState<memoForm>({
     title: "",
     body: "",
   });
   const [validation, setValidation] = useState<Validation>({});
+  const { checkLoggedIn } = useAuth();
 
   useEffect(() => {
     const init = async () => {
